@@ -1,0 +1,32 @@
+apiVersion: apps/v1 # Deployment object is in the bucker app/v1
+kind: Deployment # Tell K8 what type of object we are planning to create
+metadata: 
+  name: moderation-depl # name of the deployment.
+spec: # spec section will tell how the deployment should behave
+  replicas: 1 # number of pods we want to create running some particular image.
+  selector: # Selector and template's metadata are working together.
+    matchLabels:
+      app: moderation # label is app: moderation
+  template:
+    metadata:
+      labels:
+        app: moderation
+    spec: # This is "Pod" spec or simillar to a Pod config file
+      containers: 
+        - name: moderation # Container name is moderation.
+          image: cvenkata32/moderation:latest # Build the container inside the Pod using this docker-image
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation-clusterip-srv
+spec: 
+  type: ClusterIP # create a ClusterIP service.This is the default value for Kubernetes if we do not mention it.
+  selector: # THis tells what PODS this cluster-ip service has access to
+    app: moderation
+  ports: # Mention all the ports that we wan to expose on a target Pod
+    - name: moderation  # name of the Port, we can give any name.
+      protocol: TCP
+      port: 4003 # this is for CLuster IP service to listen to in k8 cluster
+      targetPort: 4003 # this is for Pod-container port. this should be the same as we give in our source code in `listen` api call.
+  

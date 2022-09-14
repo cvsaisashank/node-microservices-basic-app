@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service # kind of object we want to create in K8 cluster
+metadata: 
+  name: posts-srv # Service name
+spec: 
+  type: NodePort # create a NodePort service
+  selector: # find all pods with label app: posts which we need to expose to putside world using NodePort service
+    app: posts
+  ports: # Mention all the ports that we wan to expose on a target Pod
+    - name: posts  # name of the Port, we can give any name.
+      protocol: TCP
+      port: 4000 # this is for NodePort service to listen to in k8 cluster
+      targetPort: 4000 # this is for Pod-container port. this should be the same as we give in our source code
