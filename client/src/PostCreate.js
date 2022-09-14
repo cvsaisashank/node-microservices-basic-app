@@ -9,7 +9,7 @@ const PostCreate = () => {
 /* This is going to our local machine as posts.com is just an alias to our localhost
 * this is posts service listening at port 4000.
 */
-    await axios.post("http://posts.com/posts", {
+    await axios.post("http://posts.com/posts/create", {
       title,
     });
 

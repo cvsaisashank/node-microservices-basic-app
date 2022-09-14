@@ -4,15 +4,37 @@ metadata:
   name: ingress-srv # name of the Ingress.
   annotations: # important: This section is going to help the ingress-controller that we are feeding routing rules.
     kubernetes.io/ingress.class: nginx # The ingress-controller is going to scan for all the different objects within the Cluster an dit will try find the annotation which has "nginx". When ingress-controller finds it will know that there must be some routing rules 
+    nginx.ingress.kubernetes.io/use-regex: 'true' # this will allow us to regular expressions in out Path expressions 
 spec:
   rules: # rules will have all the different routing rules that we will apply to teach how to take incoming requests and then route them to corresponding Pods. 
     - host: posts.com # notes inside onenote
       http:
         paths:
-          - path: /posts # when incoming requests coming to this URL path telling the ingress-controller to navigate to a particular pod's cluster IP Service.
+          - path: /posts/create # when incoming requests coming to this URL path telling the ingress-controller to navigate to a particular pod's cluster IP Service.
             pathType: Prefix
             backend:
               service:
                 name: posts-clusterip-srv # Cluster IP service name to redirect to when requests come to this path.
                 port:
                   number: 4000 # this is the port for CLuster IP Service listenning to in the cluster.
+          - path: /posts # when incoming requests coming to this URL path telling the ingress-controller to navigate to a particular pod's cluster IP Service.
+            pathType: Prefix
+            backend:
+              service:
+                name: query-clusterip-srv # Cluster IP service name to redirect to when requests come to this path.
+                port:
+                  number: 4002 # this is the port for Cluster IP Service listenning to in the cluster.
+          - path: /posts/?(.*)/comments # when incoming requests coming to this URL path telling the ingress-controller to navigate to a particular pod's cluster IP Service.
+            pathType: Prefix
+            backend:
+              service:
+                name: comments-clusterip-srv # Cluster IP service name to redirect to when requests come to this path.
+                port:
+                  number: 4001 # this is the port for Cluster IP Service listenning to in the cluster.
+          - path: /?(.*) # This path is for react application. It tries to match any route that SPA app has. This always needs to be last.
+            pathType: Prefix
+            backend:
+              service:
+                name: client-clusterip-srv # Cluster IP service name to redirect to when requests come to this path.
+                port:
+                  number: 3000 # this is the port for Cluster IP Service listenning to in the cluster.

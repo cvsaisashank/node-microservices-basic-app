@@ -1,0 +1,58 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl: # Tells Skaffold the collection of different Kubenetes files
+    manifests: # tells skaffold to watch all the files in th ementioned path as below. Any change made to a yaml file, Skaffold is going to re-apply to K8 cluster., 
+      - ./infra/k8s/*
+build:
+  local:
+    push: false # So by default, whenever scaffold makes a change to one of our images or rebuilds an image, it's going to try to push it up to Docker Hub that is not actually required when we're using scaffold. So we're going to disable that default behavior with the setting right here.
+  artifacts: # artifact section is telling scaffold about something inside of our project that it needs to maintain
+    - image: cvenkata32/client
+      context: client # We're essentially saying that there is going to be some pod that is running code out of the client directory inside of our project.
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js' # Whenever something changes inside this directory, scaffold is going to try to take those changes and somehow update our pod. Refer to notes.
+            dest: .
+    - image: cvenkata32/comments
+      context: comments # We're essentially saying that there is going to be some pod that is running code out of the client directory inside of our project.
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # Whenever something changes inside this directory, scaffold is going to try to take those changes and somehow update our pod. Refer to notes.
+            dest: .
+    - image: cvenkata32/event-bus
+      context: event-bus # We're essentially saying that there is going to be some pod that is running code out of the client directory inside of our project.
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # Whenever something changes inside this directory, scaffold is going to try to take those changes and somehow update our pod. Refer to notes.
+            dest: .
+    - image: cvenkata32/moderation
+      context: moderation # We're essentially saying that there is going to be some pod that is running code out of the client directory inside of our project.
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # Whenever something changes inside this directory, scaffold is going to try to take those changes and somehow update our pod. Refer to notes.
+            dest: .
+    - image: cvenkata32/posts
+      context: posts # We're essentially saying that there is going to be some pod that is running code out of the client directory inside of our project.
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # Whenever something changes inside this directory, scaffold is going to try to take those changes and somehow update our pod. Refer to notes.
+            dest: .
+    - image: cvenkata32/query
+      context: query # We're essentially saying that there is going to be some pod that is running code out of the client directory inside of our project.
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js' # Whenever something changes inside this directory, scaffold is going to try to take those changes and somehow update our pod. Refer to notes.
+            dest: .
